@@ -3,6 +3,7 @@ using UnityEngine;
 public class PlatformGenerator : MonoBehaviour
 {
     public GameObject platformPrefab; // Prefab de la plataforma
+    public GameObject defeatPrefab; // Prefab de la derrota
     public float spawnDelay = 2f; // Retraso entre la generación de plataformas
     public float minXPosition = -5f; // Posición mínima en el eje X para la generación de plataformas
     public float maxXPosition = 5f; // Posición máxima en el eje X para la generación de plataformas
@@ -43,10 +44,13 @@ public class PlatformGenerator : MonoBehaviour
 
         foreach (GameObject platform in platforms)
         {
-            // Si la plataforma sale de la pantalla, destruirla
+            // Si la plataforma sale de la pantalla, destruirla y generar la zona de derrota
             if (platform.transform.position.y < mainCamera.ScreenToWorldPoint(Vector3.zero).y)
             {
                 Destroy(platform);
+
+                // Generar la zona de derrota en la posición de la plataforma eliminada
+                Instantiate(defeatPrefab, platform.transform.position, Quaternion.identity);
             }
         }
     }
