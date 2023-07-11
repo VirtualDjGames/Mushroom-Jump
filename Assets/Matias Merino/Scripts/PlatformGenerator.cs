@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 public class PlatformGenerator : MonoBehaviour
 {
@@ -14,11 +15,17 @@ public class PlatformGenerator : MonoBehaviour
     private int score = 0; // Puntaje actual
     private int maxScore = 0; // Puntaje máximo
 
+    public TextMeshProUGUI scoreText; // Referencia al TextMeshProUGUI para mostrar el puntaje actual
+    public TextMeshProUGUI maxScoreText; // Referencia al TextMeshProUGUI para mostrar el puntaje máximo
+
     void Start()
     {
         mainCamera = Camera.main;
         lastPlatformY = transform.position.y;
         maxScore = PlayerPrefs.GetInt("MaxScore", 0); // Obtener el puntaje máximo guardado
+
+        UpdateScoreText(); // Actualizar el texto del puntaje actual
+        UpdateMaxScoreText(); // Actualizar el texto del puntaje máximo
 
         InvokeRepeating("GeneratePlatform", 0f, spawnDelay);
     }
@@ -59,15 +66,24 @@ public class PlatformGenerator : MonoBehaviour
                 {
                     maxScore = score;
                     PlayerPrefs.SetInt("MaxScore", maxScore); // Guardar el nuevo puntaje máximo
+                    UpdateMaxScoreText(); // Actualizar el texto del puntaje máximo
                 }
 
-                // Mostrar el puntaje actual y el puntaje máximo obtenido
-                Debug.Log("Puntaje actual: " + score);
-                Debug.Log("Puntaje máximo: " + maxScore);
+                UpdateScoreText(); // Actualizar el texto del puntaje actual
 
                 // Generar la zona de derrota en la posición de la plataforma eliminada
                 Instantiate(defeatPrefab, platform.transform.position, Quaternion.identity);
             }
         }
+    }
+
+    void UpdateScoreText()
+    {
+        scoreText.text = score.ToString();
+    }
+
+    void UpdateMaxScoreText()
+    {
+        maxScoreText.text = "Record: " + maxScore.ToString();
     }
 }
