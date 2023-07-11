@@ -11,11 +11,15 @@ public class PlatformGenerator : MonoBehaviour
 
     private Camera mainCamera; // Referencia a la cámara principal
     private float lastPlatformY; // Posición Y de la última plataforma generada
+    private int score = 0; // Puntaje actual
+    private int maxScore = 0; // Puntaje máximo
 
     void Start()
     {
         mainCamera = Camera.main;
         lastPlatformY = transform.position.y;
+        maxScore = PlayerPrefs.GetInt("MaxScore", 0); // Obtener el puntaje máximo guardado
+
         InvokeRepeating("GeneratePlatform", 0f, spawnDelay);
     }
 
@@ -48,6 +52,18 @@ public class PlatformGenerator : MonoBehaviour
             if (platform.transform.position.y < mainCamera.ScreenToWorldPoint(Vector3.zero).y)
             {
                 Destroy(platform);
+
+                // Incrementar el puntaje
+                score++;
+                if (score > maxScore)
+                {
+                    maxScore = score;
+                    PlayerPrefs.SetInt("MaxScore", maxScore); // Guardar el nuevo puntaje máximo
+                }
+
+                // Mostrar el puntaje actual y el puntaje máximo obtenido
+                Debug.Log("Puntaje actual: " + score);
+                Debug.Log("Puntaje máximo: " + maxScore);
 
                 // Generar la zona de derrota en la posición de la plataforma eliminada
                 Instantiate(defeatPrefab, platform.transform.position, Quaternion.identity);
