@@ -9,9 +9,11 @@ public class PlatformGenerator : MonoBehaviour
     public float minXPosition = -5f; // Posición mínima en el eje X para la generación de plataformas
     public float maxXPosition = 5f; // Posición máxima en el eje X para la generación de plataformas
     public float ySeparation = 15f;
+    public int maxPlatforms = 50; // Cantidad máxima de plataformas generadas al mismo tiempo
 
     private Camera mainCamera; // Referencia a la cámara principal
     private float lastPlatformY; // Posición Y de la última plataforma generada
+    private int platformCount; // Cantidad actual de plataformas generadas
     private int score = 0; // Puntaje actual
     private int maxScore = 0; // Puntaje máximo
 
@@ -22,6 +24,7 @@ public class PlatformGenerator : MonoBehaviour
     {
         mainCamera = Camera.main;
         lastPlatformY = transform.position.y;
+        platformCount = 0;
         maxScore = PlayerPrefs.GetInt("MaxScore", 0); // Obtener el puntaje máximo guardado
 
         UpdateScoreText(); // Actualizar el texto del puntaje actual
@@ -32,6 +35,12 @@ public class PlatformGenerator : MonoBehaviour
 
     void GeneratePlatform()
     {
+        // Verificar si se alcanzó el límite de plataformas
+        if (platformCount >= maxPlatforms)
+        {
+            return;
+        }
+
         // Generar la posición aleatoria en el eje X dentro del rango establecido
         float randomX = Random.Range(minXPosition, maxXPosition);
 
@@ -46,6 +55,8 @@ public class PlatformGenerator : MonoBehaviour
 
         // Actualizar la posición Y de la última plataforma generada
         lastPlatformY += platformHeight + ySeparation;
+
+        platformCount++;
     }
 
     void Update()
@@ -56,9 +67,10 @@ public class PlatformGenerator : MonoBehaviour
         foreach (GameObject platform in platforms)
         {
             // Si la plataforma sale de la pantalla, destruirla y generar la zona de derrota
-            if (platform.transform.position.y < mainCamera.ScreenToWorldPoint(Vector3.zero).y)
+            if (platform.transform.position.y < mainCamera.ScreenToWorldPoint(Vector3.zero).y-8)
             {
                 Destroy(platform);
+                platformCount--;
 
                 // Incrementar el puntaje
                 score++;
@@ -73,6 +85,9 @@ public class PlatformGenerator : MonoBehaviour
 
                 // Generar la zona de derrota en la posición de la plataforma eliminada
                 Instantiate(defeatPrefab, platform.transform.position, Quaternion.identity);
+
+                // Generar una nueva plataforma
+                GeneratePlatform();
             }
         }
     }

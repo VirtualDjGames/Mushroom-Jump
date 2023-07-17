@@ -16,11 +16,19 @@ public class MushroomController : MonoBehaviour
     private Rigidbody2D rb;
     private bool isGrounded;
 
+    private float minXPosition; // Posición mínima en el eje X (borde izquierdo de la pantalla)
+    private float maxXPosition; // Posición máxima en el eje X (borde derecho de la pantalla)
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         jumpTimer = jumpDelay; // Establecer el temporizador inicial al valor del tiempo de espera
         canJump = false; // No permitir el salto al inicio
+
+        // Calcular los límites de la pantalla en el eje X
+        float playerWidth = GetComponent<Collider2D>().bounds.size.x;
+        minXPosition = Camera.main.ScreenToWorldPoint(new Vector3(0f, 0f, 0f)).x + (playerWidth / 2);
+        maxXPosition = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, 0f, 0f)).x - (playerWidth / 2);
     }
 
     void Update()
@@ -45,8 +53,27 @@ public class MushroomController : MonoBehaviour
         }
 
         // Movimiento horizontal
-        float horizontalInput = Input.GetAxis("Horizontal");
-        rb.velocity = new Vector2(horizontalInput * movementSpeed, rb.velocity.y);
+        float horizontalInput = 0f;
+
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+
+            if (touch.position.x < Screen.width / 2)
+            {
+                // Tocar el lado izquierdo de la pantalla
+                horizontalInput = -1f;
+            }
+            else
+            {
+                // Tocar el lado derecho de la pantalla
+                horizontalInput = 1f;
+            }
+        }
+
+        // Limitar la posición horizontal dentro de los límites de la pantalla
+        float targetX = Mathf.Clamp(transform.position.x + (horizontalInput * movementSpeed * Time.deltaTime), minXPosition, maxXPosition);
+        transform.position = new Vector3(targetX, transform.position.y, transform.position.z);
 
         // Salto
         if (isGrounded && canJump)
