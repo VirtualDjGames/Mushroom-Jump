@@ -19,6 +19,8 @@ public class MushroomController : MonoBehaviour
     private float minXPosition; // Posición mínima en el eje X (borde izquierdo de la pantalla)
     private float maxXPosition; // Posición máxima en el eje X (borde derecho de la pantalla)
 
+    public Animator anim;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -78,9 +80,15 @@ public class MushroomController : MonoBehaviour
         // Salto
         if (isGrounded && canJump)
         {
+            anim.SetBool("Saltando", true);
+
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             jumpTimer = 0f; // Reiniciar el temporizador
             canJump = false; // No permitir el salto hasta que pase el tiempo de espera nuevamente
+        }
+        else if (!isGrounded && !canJump)
+        {
+            anim.SetBool("Saltando", false);
         }
     }
 }
