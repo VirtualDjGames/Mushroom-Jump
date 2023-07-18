@@ -70,3 +70,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5631c0cfb523d44391c0a338048ff80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  playerGO: {fileID: 0}
+  defeatScreenTag: Defeat
+  si: {fileID: 0}

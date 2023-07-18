@@ -19,6 +19,7 @@ public class PlatformGenerator : MonoBehaviour
 
     public TextMeshProUGUI scoreText; // Referencia al TextMeshProUGUI para mostrar el puntaje actual
     public TextMeshProUGUI maxScoreText; // Referencia al TextMeshProUGUI para mostrar el puntaje máximo
+    public TextMeshProUGUI maxScoreTextMenu;
 
     void Start()
     {
@@ -100,5 +101,6 @@ public class PlatformGenerator : MonoBehaviour
     void UpdateMaxScoreText()
     {
         maxScoreText.text = "Record: " + maxScore.ToString();
+        maxScoreTextMenu.text = "Record: " + maxScore.ToString();
     }
 }
