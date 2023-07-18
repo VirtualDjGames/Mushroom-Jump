@@ -39,6 +39,7 @@ public class BackgroundChanged : MonoBehaviour
         if (playerPos > pos1 && playerPos < pos2)
         {
             camara.backgroundColor = Color.Lerp(_color0, _color1, t);
+
         }
         else if (playerPos > pos2 && playerPos < pos3)
         {
