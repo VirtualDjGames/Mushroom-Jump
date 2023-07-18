@@ -8,7 +8,7 @@ public class PlatformGenerator : MonoBehaviour
     public float spawnDelay = 2f; // Retraso entre la generación de plataformas
     public float minXPosition = -5f; // Posición mínima en el eje X para la generación de plataformas
     public float maxXPosition = 5f; // Posición máxima en el eje X para la generación de plataformas
-    public float ySeparation = 15f;
+    public float platformYSeparation = 15f; // Separación vertical entre plataformas
     public int maxPlatforms = 50; // Cantidad máxima de plataformas generadas al mismo tiempo
 
     private Camera mainCamera; // Referencia a la cámara principal
@@ -20,6 +20,9 @@ public class PlatformGenerator : MonoBehaviour
     public TextMeshProUGUI scoreText; // Referencia al TextMeshProUGUI para mostrar el puntaje actual
     public TextMeshProUGUI maxScoreText; // Referencia al TextMeshProUGUI para mostrar el puntaje máximo
     public TextMeshProUGUI maxScoreTextMenu;
+
+    // Referencia al CoinGenerator
+    public CoinGenerator coinGenerator;
 
     void Start()
     {
@@ -55,7 +58,7 @@ public class PlatformGenerator : MonoBehaviour
         float platformHeight = newPlatform.GetComponent<Renderer>().bounds.size.y;
 
         // Actualizar la posición Y de la última plataforma generada
-        lastPlatformY += platformHeight + ySeparation;
+        lastPlatformY += platformHeight + platformYSeparation;
 
         platformCount++;
     }
@@ -68,21 +71,13 @@ public class PlatformGenerator : MonoBehaviour
         foreach (GameObject platform in platforms)
         {
             // Si la plataforma sale de la pantalla, destruirla y generar la zona de derrota
-            if (platform.transform.position.y < mainCamera.ScreenToWorldPoint(Vector3.zero).y-8)
+            if (platform.transform.position.y < mainCamera.ScreenToWorldPoint(Vector3.zero).y - 8)
             {
                 Destroy(platform);
                 platformCount--;
 
                 // Incrementar el puntaje
-                score++;
-                if (score > maxScore)
-                {
-                    maxScore = score;
-                    PlayerPrefs.SetInt("MaxScore", maxScore); // Guardar el nuevo puntaje máximo
-                    UpdateMaxScoreText(); // Actualizar el texto del puntaje máximo
-                }
-
-                UpdateScoreText(); // Actualizar el texto del puntaje actual
+                ScoreManager.instance.AddScore(1);
 
                 // Generar la zona de derrota en la posición de la plataforma eliminada
                 Instantiate(defeatPrefab, platform.transform.position, Quaternion.identity);
@@ -102,5 +97,20 @@ public class PlatformGenerator : MonoBehaviour
     {
         maxScoreText.text = "Record: " + maxScore.ToString();
         maxScoreTextMenu.text = "Record: " + maxScore.ToString();
+    }
+
+    // Método para incrementar el puntaje y actualizar los textos
+    public void AddScore(int points)
+    {
+        score += points;
+
+        if (score > maxScore)
+        {
+            maxScore = score;
+            PlayerPrefs.SetInt("MaxScore", maxScore); // Guardar el nuevo puntaje máximo
+            UpdateMaxScoreText(); // Actualizar el texto del puntaje máximo
+        }
+
+        UpdateScoreText(); // Actualizar el texto del puntaje actual
     }
 }
