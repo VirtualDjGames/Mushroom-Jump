@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class MushroomController : MonoBehaviour
 {
-    private float jumpForce = 35f;
+    public float jumpForce = 35f;
     private float movementSpeed = 15f;
     public LayerMask groundLayer;
     public Transform groundCheckC;
@@ -20,6 +20,8 @@ public class MushroomController : MonoBehaviour
     private float maxXPosition; // Posición máxima en el eje X (borde derecho de la pantalla)
 
     public Animator anim;
+    public AudioSource aud;
+
 
     void Start()
     {
@@ -31,6 +33,7 @@ public class MushroomController : MonoBehaviour
         float playerWidth = GetComponent<Collider2D>().bounds.size.x;
         minXPosition = Camera.main.ScreenToWorldPoint(new Vector3(0f, 0f, 0f)).x + (playerWidth / 2);
         maxXPosition = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, 0f, 0f)).x - (playerWidth / 2);
+        
     }
 
     void Update()
@@ -80,8 +83,8 @@ public class MushroomController : MonoBehaviour
         // Salto
         if (isGrounded && canJump)
         {
+            aud.Play();
             anim.SetBool("Saltando", true);
-
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             jumpTimer = 0f; // Reiniciar el temporizador
             canJump = false; // No permitir el salto hasta que pase el tiempo de espera nuevamente

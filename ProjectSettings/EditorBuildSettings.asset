@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Matias Merino/Test codigo.unity
+    path: Assets/Matias Merino/Juego.unity
     guid: b6ad7c31b45a709439324d42ce109f31
   m_configObjects: {}
